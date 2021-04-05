@@ -23,7 +23,7 @@ public class PodSetOperatorMain {
     public static void main(String[] args){
         //This would make a call to the PodSet Controller
         //this is the driver class
-        //This will read Kubernetes Config
+        //This will read Kubernetes Config which is in .kube/config
         try(KubernetesClient client = new DefaultKubernetesClient()){
             String namespace = client.getNamespace();
             if (namespace == null) {
@@ -33,6 +33,15 @@ public class PodSetOperatorMain {
             logger.log(Level.INFO, "Using namespace : " + namespace);
             //Instantiate ShareInformer
             SharedInformerFactory informerfactory = client.informers();
+
+            //Additional requirement needed to talk with the API of Kubernetes
+            CustomResourceDefinitionContext podSetCustomResourceDefinitionContext = new CustomResourceDefinitionContext.Builder()
+                    .withVersion("v1alpha1")
+                    .withScope("Namespaced")//a namespace resource
+                    .withGroup("demo.fabric8.io")
+                    .withPlural("podsets")
+                    .build();
+
 
             MixedOperation<PodSet, PodSetList, Resource<PodSet>> podSetClient = client.customResources(PodSet.class, PodSetList.class);
             //Subscribe Notifications Related to pod
@@ -45,8 +54,12 @@ public class PodSetOperatorMain {
             PodSetController podSetController = new PodSetController(client,podSetClient,podSharedIndexInformer,podSetSharedIndexInformer,namespace);
 
             podSetController.create();
+
+            //Starting All informers to list to the events
             informerfactory.startAllRegisteredInformers();
+
             informerfactory.addSharedInformerEventListener(exception -> logger.log(Level.SEVERE, "Exception occurred, but caught", exception));
+
             podSetController.run();
         }catch(KubernetesClientException exception){
             logger.log(Level.SEVERE, "Kubernetes Client Exception : " + exception.getMessage());

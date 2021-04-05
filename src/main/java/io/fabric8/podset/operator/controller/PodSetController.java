@@ -35,6 +35,9 @@ public class PodSetController {
     public static final Logger logger = Logger.getLogger(PodSetController.class.getName());
     public static final String APP_LABEL = "app";
 
+
+
+    //Constructor for our controller
     public PodSetController(KubernetesClient kubernetesClient, MixedOperation<PodSet, PodSetList, Resource<PodSet>> podSetClient, SharedIndexInformer<Pod> podInformer, SharedIndexInformer<PodSet> podSetInformer, String namespace) {
         this.kubernetesClient = kubernetesClient;
         this.podSetClient = podSetClient;
@@ -46,9 +49,11 @@ public class PodSetController {
     }
 
     public void create() {
+        //Add event handlers for PodSet resources and Pod Resources
         podSetInformer.addEventHandler(new ResourceEventHandler<PodSet>() {
             @Override
             public void onAdd(PodSet podSet) {
+                //A queue for storing all the events and then process it in run method
                 enqueuePodSet(podSet);
             }
 
@@ -124,7 +129,9 @@ public class PodSetController {
      *
      * @param podSet specified podset
      */
+    //Reconcile is the most important part of controller as it contains the logic of the opearator
     protected void reconcile(PodSet podSet) {
+        //List all the pods in the cluster
         List<String> pods = podCountByLabel(APP_LABEL, podSet.getMetadata().getName());
         if (pods.isEmpty()) {
             createPods(podSet.getSpec().getReplicas(), podSet);
@@ -157,10 +164,13 @@ public class PodSetController {
     }
 
     private List<String> podCountByLabel(String label, String podSetName) {
+        //Receive the Pod Names in the form of List
         List<String> podNames = new ArrayList<>();
+        //Get the Pods from cache using lister function
         List<Pod> pods = podLister.list();
 
         for (Pod pod : pods) {
+            //Check the conditions and add it to pod Names
             if (pod.getMetadata().getLabels().entrySet().contains(new AbstractMap.SimpleEntry<>(label, podSetName))) {
                 if (pod.getStatus().getPhase().equals("Running") || pod.getStatus().getPhase().equals("Pending")) {
                     podNames.add(pod.getMetadata().getName());
@@ -172,6 +182,7 @@ public class PodSetController {
         return podNames;
     }
 
+    //For enqueuing events into WorkQueue
     private void enqueuePodSet(PodSet podSet) {
         logger.log(Level.INFO, "enqueuePodSet(" + podSet.getMetadata().getName() + ")");
         String key = Cache.metaNamespaceKeyFunc(podSet);
@@ -182,6 +193,7 @@ public class PodSetController {
         }
     }
 
+    //To check whether the Pod Parent is a PodSet or not
     private void handlePodObject(Pod pod) {
         logger.log(Level.INFO, "handlePodObject(" + pod.getMetadata().getName() + ")");
         OwnerReference ownerReference = getControllerOf(pod);
@@ -195,6 +207,17 @@ public class PodSetController {
         }
     }
 
+    private OwnerReference getControllerOf(Pod pod) {
+        List<OwnerReference> ownerReferences = pod.getMetadata().getOwnerReferences();
+        for (OwnerReference ownerReference : ownerReferences) {
+            //Check if OwnerReference is a controller or not
+            if (ownerReference.getController().equals(Boolean.TRUE)) {
+                return ownerReference;
+            }
+        }
+        return null;
+    }
+
     private void updateAvailableReplicasInPodSetStatus(PodSet podSet, int replicas) {
         PodSetStatus podSetStatus = new PodSetStatus();
         podSetStatus.setAvailableReplicas(replicas);
@@ -205,6 +228,7 @@ public class PodSetController {
     private Pod createNewPod(PodSet podSet) {
         return new PodBuilder()
                 .withNewMetadata()
+                //Prefix the name with PodSt name with Pod and some random String
                 .withGenerateName(podSet.getMetadata().getName() + "-pod")
                 .withNamespace(podSet.getMetadata().getNamespace())
                 .withLabels(Collections.singletonMap(APP_LABEL, podSet.getMetadata().getName()))
@@ -216,13 +240,5 @@ public class PodSetController {
                 .build();
     }
 
-    private OwnerReference getControllerOf(Pod pod) {
-        List<OwnerReference> ownerReferences = pod.getMetadata().getOwnerReferences();
-        for (OwnerReference ownerReference : ownerReferences) {
-            if (ownerReference.getController().equals(Boolean.TRUE)) {
-                return ownerReference;
-            }
-        }
-        return null;
-    }
+
 }
