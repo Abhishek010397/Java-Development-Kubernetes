@@ -1,0 +1,27 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    jkube.io/scm-url: https://github.com/spring-projects/spring-boot/Kubernetes-API
+    jkube.io/scm-tag: HEAD
+    prometheus.io/port: "9779"
+    prometheus.io/scrape: "true"
+  labels:
+    expose: "true"
+    app: Kubernetes-API
+    provider: jkube
+    version: 0.0.1-SNAPSHOT
+    group: com.labcerebrone
+  name: kubernetes-api
+spec:
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: Kubernetes-API
+    provider: jkube
+    group: com.labcerebrone
+  type: NodePort

@@ -1,0 +1,3 @@
+com/labcerebrone/Kubernetes/API/controller/KubernetesClientInsidePodEndpoint.class
+com/labcerebrone/Kubernetes/API/KubernetesClientInsidePodApplication.class
+com/labcerebrone/Kubernetes/API/model/KubernetesService.class

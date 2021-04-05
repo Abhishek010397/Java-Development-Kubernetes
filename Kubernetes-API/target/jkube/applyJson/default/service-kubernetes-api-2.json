@@ -1,0 +1,93 @@
+{
+  "apiVersion" : "v1",
+  "kind" : "Service",
+  "metadata" : {
+    "annotations" : {
+      "jkube.io/scm-tag" : "HEAD",
+      "jkube.io/scm-url" : "https://github.com/spring-projects/spring-boot/Kubernetes-API",
+      "prometheus.io/port" : "9779",
+      "prometheus.io/scrape" : "true"
+    },
+    "creationTimestamp" : "2021-04-05T21:03:20Z",
+    "labels" : {
+      "app" : "Kubernetes-API",
+      "expose" : "true",
+      "group" : "com.labcerebrone",
+      "provider" : "jkube",
+      "version" : "0.0.1-SNAPSHOT"
+    },
+    "managedFields" : [ {
+      "apiVersion" : "v1",
+      "fieldsType" : "FieldsV1",
+      "fieldsV1" : {
+        "f:metadata" : {
+          "f:annotations" : {
+            "." : { },
+            "f:jkube.io/scm-tag" : { },
+            "f:jkube.io/scm-url" : { },
+            "f:prometheus.io/port" : { },
+            "f:prometheus.io/scrape" : { }
+          },
+          "f:labels" : {
+            "." : { },
+            "f:app" : { },
+            "f:expose" : { },
+            "f:group" : { },
+            "f:provider" : { },
+            "f:version" : { }
+          }
+        },
+        "f:spec" : {
+          "f:externalTrafficPolicy" : { },
+          "f:ports" : {
+            "." : { },
+            "k:{\"port\":8080,\"protocol\":\"TCP\"}" : {
+              "." : { },
+              "f:name" : { },
+              "f:port" : { },
+              "f:protocol" : { },
+              "f:targetPort" : { }
+            }
+          },
+          "f:selector" : {
+            "." : { },
+            "f:app" : { },
+            "f:group" : { },
+            "f:provider" : { }
+          },
+          "f:sessionAffinity" : { },
+          "f:type" : { }
+        }
+      },
+      "manager" : "okhttp",
+      "operation" : "Update",
+      "time" : "2021-04-05T21:03:20Z"
+    } ],
+    "name" : "kubernetes-api",
+    "namespace" : "default",
+    "resourceVersion" : "46559",
+    "uid" : "8c9f4ff8-f512-4983-b238-e4f7008362fb"
+  },
+  "spec" : {
+    "clusterIP" : "10.96.247.140",
+    "externalTrafficPolicy" : "Cluster",
+    "ports" : [ {
+      "name" : "http",
+      "nodePort" : 30776,
+      "port" : 8080,
+      "protocol" : "TCP",
+      "targetPort" : 8080
+    } ],
+    "selector" : {
+      "app" : "Kubernetes-API",
+      "group" : "com.labcerebrone",
+      "provider" : "jkube"
+    },
+    "sessionAffinity" : "None",
+    "type" : "NodePort",
+    "clusterIPs" : [ "10.96.247.140" ]
+  },
+  "status" : {
+    "loadBalancer" : { }
+  }
+}
