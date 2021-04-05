@@ -129,7 +129,8 @@ public class PodSetController {
      *
      * @param podSet specified podset
      */
-    //Reconcile is the most important part of controller as it contains the logic of the opearator
+    //Reconcile is the most important part of controller as it contains the logic of the operator
+
     protected void reconcile(PodSet podSet) {
         //List all the pods in the cluster
         List<String> pods = podCountByLabel(APP_LABEL, podSet.getMetadata().getName());
@@ -206,6 +207,7 @@ public class PodSetController {
             enqueuePodSet(podSet);
         }
     }
+
 
     private OwnerReference getControllerOf(Pod pod) {
         List<OwnerReference> ownerReferences = pod.getMetadata().getOwnerReferences();
