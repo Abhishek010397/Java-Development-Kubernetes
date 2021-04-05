@@ -21,3 +21,6 @@ To run the Project:-
 2. kubectl apply -f podset.yaml
 3. mvn clean install
 4. mvn exec:java -Dexec.mainClass=io.fabric8.podset.operator.PodSetOperatorMain
+
+To run the second Application "Kubernetes Api" use:-
+mvn package k8s:build k8s:resource k8s:apply
