@@ -1,0 +1,8 @@
+io/fabric8/podset/operator/controller/PodSetController$1.class
+io/fabric8/podset/operator/crd/PodSetStatus.class
+io/fabric8/podset/operator/crd/PodSet.class
+io/fabric8/podset/operator/controller/PodSetController.class
+io/fabric8/podset/operator/crd/PodSetSpec.class
+io/fabric8/podset/operator/crd/PodSetList.class
+io/fabric8/podset/operator/PodSetOperatorMain.class
+io/fabric8/podset/operator/controller/PodSetController$2.class
